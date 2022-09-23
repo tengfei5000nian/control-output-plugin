@@ -86,18 +86,15 @@ class ControlOutputPlugin {
       if (this.error(compilation.getStats())) return; // 替换路径
 
       const assets = compilation.assets;
-      const assetsInfo = compilation.assetsInfo;
       Object.keys(assets).forEach(name => {
         const newName = this.redirect(name);
         if (newName === name) return;
 
         if (newName) {
-          assets[newName] = assets[name];
-          assetsInfo.set(newName, assetsInfo.get(name));
+          compilation.renameAsset(name, newName);
+        } else {
+          compilation.deleteAsset(name);
         }
-
-        delete assets[name];
-        assetsInfo.delete(name);
       });
     });
     compiler.hooks.done.tap(pluginName, stats => {
