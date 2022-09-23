@@ -1,0 +1,46 @@
+{
+  "name": "control-output-plugin",
+  "version": "1.0.0",
+  "author": "Wei Dong <616595355@qq.com>",
+  "description": "",
+  "homepage": "https://github.com/tengfei5000nian/control-output-plugin",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "keywords": [
+    "webpack",
+    "plugin",
+    "output",
+    "node"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tengfei5000nian/control-output-plugin.git"
+  },
+  "peerDependencies": {
+    "webpack": ">=4.0.0 <6.0.0"
+  },
+  "scripts": {
+    "clean": "del-cli --dot=true \"./dist/**/*\"",
+    "build": "npm run clean && npm run build.compile",
+    "build.compile": "cross-env NODE_ENV=production babel src -d dist --copy-files --source-maps",
+    "dev": "npm run clean && cross-env NODE_ENV=development babel -w src -d dist --copy-files --source-maps"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.18.13",
+    "@babel/preset-env": "^7.18.10",
+    "cross-env": "^7.0.3",
+    "del-cli": "^5.0.0",
+    "read-pkg-up": "^6.0.0"
+  },
+  "dependencies": {
+    "del": "^4.1.1",
+    "schema-utils": "^4.0.0"
+  }
+}
