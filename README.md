@@ -6,7 +6,7 @@
 
 ## 关于
 
-control-output-plugin用来修改最终asset的文件路径或过滤文件，该事件发生在compiler.hooks.emit中。需要注意的一点，它不会更改模块中的依赖关系，所以使用它你模块中的依赖将发生错误。还有一点它拥有clean-webpack-plugin的部分功能，用来清除过期的asset文件。
+control-output-plugin用来修改最终asset的文件路径或过滤文件，该事件发生在compilation.hooks.afterProcessAssets中。需要注意的一点，它不会更改模块中的依赖关系，所以使用它你模块中的依赖将发生错误。还有一点它拥有clean-webpack-plugin的部分功能，用来清除过期的asset文件。
 
 ## 安装
 

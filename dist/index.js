@@ -81,20 +81,20 @@ class ControlOutputPlugin {
     }
 
     this.outputPath = compiler.options.output.path;
-    compiler.hooks.emit.tap(pluginName, compilation => {
-      // 判断是否编译错误
-      if (this.error(compilation.getStats())) return; // 替换路径
+    compiler.hooks.thisCompilation.tap(pluginName, compilation => {
+      compilation.hooks.afterProcessAssets.tap(pluginName, () => {
+        // 替换路径
+        const assets = compilation.assets;
+        Object.keys(assets).forEach(name => {
+          const newName = this.redirect(name);
+          if (newName === name) return;
 
-      const assets = compilation.assets;
-      Object.keys(assets).forEach(name => {
-        const newName = this.redirect(name);
-        if (newName === name) return;
-
-        if (newName) {
-          compilation.renameAsset(name, newName);
-        } else {
-          compilation.deleteAsset(name);
-        }
+          if (newName) {
+            compilation.renameAsset(name, newName);
+          } else {
+            compilation.deleteAsset(name);
+          }
+        });
       });
     });
     compiler.hooks.done.tap(pluginName, stats => {
