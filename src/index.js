@@ -1,5 +1,6 @@
 import path from 'path'
 import del from 'del'
+import fs from 'fs'
 import { validate } from 'schema-utils'
 
 const pluginName = 'control-output-plugin'
@@ -73,7 +74,8 @@ export default class ControlOutputPlugin {
     })
 
     this.outputPath = ''
-    this.currentAssets = []
+    this.cachePath = path.join(process.cwd(), '.control-output-plugin')
+    this.getCache()
   }
 
   apply(compiler) {
@@ -109,7 +111,7 @@ export default class ControlOutputPlugin {
       const removePatterns = this.currentAssets.filter(previousAsset => {
         return assetNames.includes(previousAsset) === false
       })
-      this.currentAssets = assetNames
+      this.setCache(assetNames)
       removePatterns.length && this.remove(removePatterns)
     })
   }
@@ -168,6 +170,25 @@ export default class ControlOutputPlugin {
       return true
     } else {
       return false
+    }
+  }
+
+  setCache(assets) {
+    this.currentAssets = assets
+    fs.writeFile(this.cachePath, assets.join('\n'), {
+      encoding: 'utf8'
+    }, err => {
+      this.options.verbose && err && console.error(err)
+    })
+  }
+
+  getCache() {
+    try {
+      this.currentAssets = fs.readFileSync(this.cachePath, {
+        encoding: 'utf8'
+      }).toString().split(/\n+/)
+    } catch (err) {
+      this.currentAssets = []
     }
   }
 }

@@ -9,6 +9,8 @@ var _path = _interopRequireDefault(require("path"));
 
 var _del = _interopRequireDefault(require("del"));
 
+var _fs = _interopRequireDefault(require("fs"));
+
 var _schemaUtils = require("schema-utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -71,7 +73,8 @@ class ControlOutputPlugin {
       (0, _schemaUtils.validate)(defaultControlItemOptions, item);
     });
     this.outputPath = '';
-    this.currentAssets = [];
+    this.cachePath = _path.default.join(process.cwd(), '.control-output-plugin');
+    this.getCache();
   }
 
   apply(compiler) {
@@ -105,7 +108,7 @@ class ControlOutputPlugin {
       const removePatterns = this.currentAssets.filter(previousAsset => {
         return assetNames.includes(previousAsset) === false;
       });
-      this.currentAssets = assetNames;
+      this.setCache(assetNames);
       removePatterns.length && this.remove(removePatterns);
     });
   }
@@ -162,6 +165,26 @@ class ControlOutputPlugin {
       return true;
     } else {
       return false;
+    }
+  }
+
+  setCache(assets) {
+    this.currentAssets = assets;
+
+    _fs.default.writeFile(this.cachePath, assets.join('\n'), {
+      encoding: 'utf8'
+    }, err => {
+      this.options.verbose && err && console.error(err);
+    });
+  }
+
+  getCache() {
+    try {
+      this.currentAssets = _fs.default.readFileSync(this.cachePath, {
+        encoding: 'utf8'
+      }).toString().split(/\n+/);
+    } catch (err) {
+      this.currentAssets = [];
     }
   }
 
